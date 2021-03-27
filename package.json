@@ -1,0 +1,39 @@
+{
+  "name": "slim-sim",
+  "description": "Webpack configuration",
+  "main": "webpack.config.js",
+  "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
+    "@intervolga/optimize-cssnano-plugin": "^1.0.6",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.6.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^6.0.0",
+    "img-loader": "^3.0.1",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^9.0.3",
+    "style-loader": "^1.2.1",
+    "uglifyjs-webpack-plugin": "^1.1.2",
+    "url-loader": "^4.1.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "webpack": "node_modules/.bin/webpack",
+    "webpackdev": "NODE_ENV=dev node_modules/.bin/webpack",
+    "webpack:win": "node_modules/.bin/webpack.cmd",
+    "webpackdev:win": "cross-env NODE_ENV=dev node_modules/.bin/webpack.cmd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SymonDevelop/slim-sim.git"
+  },
+  "author": "SimonDevelop",
+  "license": "MIT"
+}
