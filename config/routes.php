@@ -42,7 +42,7 @@ $app->group("", function ($app) {
 // Markers Ajax
 $app->group("/marker", function ($app) {
     // Ajout marker
-    $app->post("/add/{token}", HomeController::class. ":getAjaxAddMarker")->setName("add-marker");
+    $app->post("/add/{token}", HomeController::class. ":postAjaxAddMarker")->setName("add-marker");
 })
 // Middleware pour la génération de token
 ->add(new App\Middlewares\TokenMiddleware($container));
