@@ -141,6 +141,14 @@
       }
       mymap.on('click', onMapClick)
 
+      // Affichage des markers de l'utilisateur
+      {% for m in markers %}
+        L.marker([
+          {{m.lat}},
+          {{m.lng}}
+        ]).bindPopup("date: {{m.date|date('d/m/Y')}}").addTo(mymap)
+      {% endfor %}
+
     })
   </script>
 {% endblock %}

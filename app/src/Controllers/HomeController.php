@@ -11,9 +11,11 @@ class HomeController extends Controller
 {
     public function getHome(RequestInterface $request, ResponseInterface $response)
     {
-        $user = 1;
+        $auth = $_SESSION["auth"];
+        $user = $auth["id_user"];
+        $markers = $this->em->getRepository("App\Entity\Marker")->getMarkersByUser($user);
         $key = $_ENV["API_KEY_MAP"];
-        $params = compact("key", "user");
+        $params = compact("key", "user", "markers");
         return $this->render($response, 'pages/home.twig', $params);
     }
 
