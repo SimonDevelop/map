@@ -48,7 +48,7 @@ class AuthController extends Controller
                 if (empty($errors)) {
                     $user = $this->em->getRepository("App\Entity\User")->getUserByEmail($params["email"]);
                     if (is_array($user) && count($user) >= 1) {
-                        if (!$user[0]->getActive()) {
+                        if (!$user[0]->isActive()) {
                             $errors[] = "Le compte ".$user[0]->getEmail()." est désactivé.";
                             $this->alert($errors, "danger");
                             return $this->redirect($response, "login", 400);
@@ -57,27 +57,16 @@ class AuthController extends Controller
                                 $auth = [
                                     "id_user" => $user[0]->getId(),
                                     "email" => $user[0]->getEmail(),
-                                    "secret" => $user[0]->getSecret(),
                                     "admin" => $user[0]->getAdmin(),
-                                    "date_create" => $user[0]->getDateCreate(),
-                                    "date_last" => (new \DateTime()),
-                                    "last_ip" => $request->getServerParams()["REMOTE_ADDR"]
+                                    "date_create" => $user[0]->getDateCreate()
                                 ];
-                                if (!is_null($user[0]->getDateLast())) {
-                                    $auth["date_last"] = $user[0]->getDateLast();
-                                }
-                                if (!is_null($user[0]->getLastIp())) {
-                                    $auth["last_ip"] = $user[0]->getLastIp();
-                                }
                                 // Remember token
                                 $remember_token = $this->generateToken();
                                 $user[0]->setRememberToken($remember_token);
-                                $user[0]->setDateLast((new \DateTime()));
-                                $user[0]->setLastIp($request->getServerParams()["REMOTE_ADDR"]);
                                 $this->em->persist($user[0]);
                                 $this->em->flush();
                                 setcookie("remember", $user[0]->getId()."==".$remember_token.
-                                sha1($user[0]->getId()."horyzone"), time() + 60 * 60 * 24 * 2);
+                                sha1($user[0]->getId()."mymap"), time() + 60 * 60 * 24 * 2);
                                 // Notification
                                 $_SESSION["auth"] = $auth;
                                 $this->alert(["Vous êtes connecté !"], "success");

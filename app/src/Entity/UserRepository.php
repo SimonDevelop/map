@@ -27,19 +27,6 @@ class UserRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function getUserBySecret(string $secret, bool $active = null)
-    {
-        $qb = $this->createQueryBuilder("u")
-            ->select("u")
-            ->andWhere("u.secret = :secret")
-                ->setParameter("secret", $secret);
-        if (!is_null($active)) {
-            $qb->andWhere("u.active = :active")
-                ->setParameter("active", $active);
-        }
-        return $qb->getQuery()->getResult();
-    }
-
     public function getUserByEmail(string $email, bool $active = null)
     {
         $qb = $this->createQueryBuilder("u")

@@ -36,7 +36,7 @@ class ConnectedMiddleware
             $userSession = $_SESSION["auth"];
             $user = $this->container->get("em")->getRepository("App\Entity\User")->getUserById($userSession['id_user']);
             if (!is_null($user) && is_array($user) && count($user) === 1) {
-                if (!$user[0]->getActive()) {
+                if (!$user[0]->isActive()) {
                     unset($_SESSION["auth"]);
                     unset($_SESSION["csrf"]);
                     unset($_SESSION["token"]);
@@ -50,11 +50,8 @@ class ConnectedMiddleware
                     $auth = [
                         "id_user" => $user[0]->getId(),
                         "email" => $user[0]->getEmail(),
-                        "secret" => $user[0]->getSecret(),
                         "admin" => $user[0]->getAdmin(),
-                        "date_create" => $user[0]->getDateCreate(),
-                        "date_last" => $userSession["date_last"],
-                        "last_ip" => $userSession["last_ip"]
+                        "date_create" => $user[0]->getDateCreate()
                     ];
                     $_SESSION["auth"] = $auth;
                     $this->container->get("view")->getEnvironment()->addGlobal(

@@ -13,7 +13,6 @@ class HomepageTest extends BaseTestCase
         $request = $this->createRequest('GET', '/');
         $response = $app->handle($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('Hello world!', (string)$response->getBody());
+        $this->assertEquals(301, $response->getStatusCode());
     }
 }

@@ -62,13 +62,6 @@ class User
     private $admin;
 
     /**
-     * @var string $secret
-     *
-     * @ORM\Column(type="string")
-     */
-    private $secret;
-
-    /**
      * @var datetime $date_create
      *
      * @ORM\Column(type="datetime")
@@ -244,29 +237,6 @@ class User
     public function setAdmin($admin)
     {
         $this->admin = $admin;
-        return $this;
-    }
-
-    /**
-    * Get secret
-    *
-    * @return string
-    */
-    public function getSecret()
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Set secret
-     *
-     * @param string $secret
-     *
-     * @return User
-     */
-    public function setSecret($secret)
-    {
-        $this->secret = $secret;
         return $this;
     }
 

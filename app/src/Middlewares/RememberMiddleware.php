@@ -39,7 +39,7 @@ class RememberMiddleware
 
                 // Si utilisateur trouvé, vérifier le token
                 if (null != $user && !empty($user)) {
-                    if ($user[0]->getActive() === true) {
+                    if ($user[0]->isActive() === true) {
                         $expected = $user_id.'=='.$user[0]->getRememberToken().sha1($user_id."clients");
 
                         // Si token valide, initialiser la session
@@ -47,11 +47,8 @@ class RememberMiddleware
                             $auth = [
                                 "id_user" => $user[0]->getId(),
                                 "email" => $user[0]->getEmail(),
-                                "secret" => $user[0]->getSecret(),
                                 "admin" => $user[0]->getAdmin(),
-                                "date_create" => $user[0]->getDateCreate(),
-                                "date_last" => $user[0]->getDateLast(),
-                                "last_ip" => $user[0]->getLastIp()
+                                "date_create" => $user[0]->getDateCreate()
                             ];
                             $_SESSION["auth"] = $auth;
                             setcookie('remember', $remember_token, time() + 60 * 60 * 24 * 1);
