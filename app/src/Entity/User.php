@@ -20,18 +20,53 @@ class User
     private $id;
 
     /**
-     * @var string $name
+     * @var string $email
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", unique=true, length=100)
      */
-    private $name;
+    private $email;
 
     /**
-     * @var integer $rank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Rank", cascade={"persist"})
-     * @ORM\JoinColumn(name="id_rank", referencedColumnName="id_rank", nullable=true)
+     * @var string $password
+     *
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
-    private $rank;
+    private $password;
+
+    /**
+     * @var string $rememberToken
+     *
+     * @ORM\Column(name="remember_token", type="string", nullable=true)
+     */
+    private $rememberToken;
+
+    /**
+     * @var string $resetToken
+     *
+     * @ORM\Column(name="reset_token", type="string", nullable=true)
+     */
+    private $resetToken;
+
+    /**
+     * @var bool $active
+     *
+     * @ORM\Column(name="active", type="boolean", nullable=false)
+     */
+    private $active;
+
+    /**
+     * @var bool $admin
+     *
+     * @ORM\Column(name="admin", type="boolean", nullable=false)
+     */
+    private $admin;
+
+    /**
+     * @var string $secret
+     *
+     * @ORM\Column(type="string")
+     */
+    private $secret;
 
     /**
      * @var datetime $date_create
@@ -45,8 +80,11 @@ class User
      */
     public function __construct()
     {
+        $this->rememberToken = null;
+        $this->resetToken = null;
+        $this->active = true;
+        $this->admin = false;
         $this->date_create = new \DateTime();
-        $this->rank = null;
     }
 
     /**
@@ -60,26 +98,186 @@ class User
     }
 
     /**
-     * Set name
+    * Get email
+    *
+    * @return string
+    */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set email
      *
-     * @param string $name
+     * @param string $email
      *
      * @return User
      */
-    public function setName($name)
+    public function setEmail($email)
     {
-        $this->name = $name;
+        $this->email = $email;
         return $this;
     }
 
     /**
-     * Get name
+    * Get password
+    *
+    * @return string
+    */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return User
+     */
+    public function setPassword($password)
+    {
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        return $this;
+    }
+
+    /**
+     * Password verification
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function passwordVerify($password)
+    {
+        return password_verify($password, $this->password);
+    }
+
+    /**
+     * Get rememberToken
      *
      * @return string
      */
-    public function getName()
+    public function getRememberToken()
     {
-        return $this->name;
+        return $this->rememberToken;
+    }
+
+    /**
+    * Set rememberToken
+    *
+    * @param string $rememberToken
+    *
+    * @return User
+    */
+    public function setRememberToken($rememberToken)
+    {
+        $this->rememberToken = $rememberToken;
+        return $this;
+    }
+
+    /**
+     * Get resetToken
+     *
+     * @return string
+     */
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * Set resetToken
+     *
+     * @param string $resetToken
+     *
+     * @return User
+     */
+    public function setResetToken($resetToken)
+    {
+        $this->resetToken = $resetToken;
+        return $this;
+    }
+
+    /**
+    * Get active
+    *
+    * @return boolean
+    */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return User
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+        return $this;
+    }
+
+    /**
+    * Get admin
+    *
+    * @return boolean
+    */
+    public function getAdmin()
+    {
+        return $this->admin;
+    }
+
+    /**
+     * Set admin
+     *
+     * @param boolean $admin
+     *
+     * @return User
+     */
+    public function setAdmin($admin)
+    {
+        $this->admin = $admin;
+        return $this;
+    }
+
+    /**
+    * Get secret
+    *
+    * @return string
+    */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
+
+    /**
+     * Set secret
+     *
+     * @param string $secret
+     *
+     * @return User
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+        return $this;
+    }
+
+    /**
+    * Get date_create
+    *
+    * @return \DateTime
+    */
+    public function getDateCreate()
+    {
+        return $this->date_create;
     }
 
     /**
@@ -92,39 +290,6 @@ class User
     public function setDateCreate(\DateTime $date_create)
     {
         $this->date_create = $date_create;
-        return $this;
-    }
-
-    /**
-     * Get date_create
-     *
-     * @return \DateTime
-     */
-    public function getDateCreate()
-    {
-        return $this->date_create;
-    }
-
-    /**
-    * Get rank
-    *
-    * @return \Doctrine\Common\Collections\Collection
-    */
-    public function getRank()
-    {
-        return $this->rank;
-    }
-
-    /**
-     * Set rank
-     *
-     * @param \App\Entity\Rank $rank
-     *
-     * @return User
-     */
-    public function setRank(\App\Entity\Rank $rank = null)
-    {
-        $this->rank = $rank;
         return $this;
     }
 }

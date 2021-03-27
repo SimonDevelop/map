@@ -8,12 +8,13 @@ class HomeController extends Controller
 {
     public function getHome(RequestInterface $request, ResponseInterface $response)
     {
+        $user = 1;
         $key = $_ENV["API_KEY_MAP"];
-        $params = compact("key");
+        $params = compact("key", "user");
         return $this->render($response, 'pages/home.twig', $params);
     }
 
-    public function postHome(RequestInterface $request, ResponseInterface $response)
+    public function getAjaxAddMarker(RequestInterface $request, ResponseInterface $response)
     {
         return $this->redirect($response, 'home');
     }

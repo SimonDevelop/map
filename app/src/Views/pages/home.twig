@@ -11,6 +11,29 @@
 
 <div id="mapid"></div>
 
+<div class="modal" id="markerModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajouter un marqueur</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="latInput">Latitude</label>
+          <input type="text" class="form-control" id="latInput">
+        </div>
+        <div class="form-group">
+          <label for="lngInput">Longitude</label>
+          <input type="text" class="form-control" id="lngInput">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block javascript %}
@@ -20,8 +43,8 @@
   crossorigin=""></script>
   <script type="text/javascript">
     $(document).ready(function() {
+      // Chargement de la map
       var mymap = L.map('mapid').setView([48.858560644769824, 2.294481307987543], 4);
-
       L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
@@ -39,7 +62,11 @@
         // L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap);
         console.log(e.latlng.lat)
         console.log(e.latlng.lng)
-        // alert("You clicked the map at " + e.latlng);
+        $('#latInput').val(e.latlng.lat)
+        $('#lngInput').val(e.latlng.lng)
+        $('#markerModal').modal({
+          backdrop: 'static'
+        })
       }
       mymap.on('click', onMapClick);
 
