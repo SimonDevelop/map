@@ -5,11 +5,41 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
    crossorigin=""/>
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css"
+   rel="stylesheet" integrity="sha256-JDBcnYeV19J14isGd3EtnsCQK05d8PczJ5+fvEvBJvI=" crossorigin="anonymous" />
 {% endblock %}
 
 {% block content %}
 
 <div id="mapid"></div>
+
+<div class="modal" id="markerModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajouter un marqueur</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="latInput">Latitude :</label>
+          <input type="text" class="form-control" id="latInput" name="lat" pattern="[0-9]+([\.][0-9]+)?" required>
+        </div>
+        <div class="form-group">
+          <label for="lngInput">Longitude :</label>
+          <input type="text" class="form-control" id="lngInput" name="lng" pattern="[0-9]+([\.][0-9]+)?" required>
+        </div>
+        <div class="form-group">
+          <label for="dateInput">Date :</label>
+          <input type="text" class="form-control" id="dateInput" name="date" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnAdd" disabled>Ajouter</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -18,10 +48,14 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
   crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"
+  integrity="sha256-tW5LzEC7QjhG0CiAvxlseMTs2qJS7u3DRPauDjFJ3zo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/locales/bootstrap-datepicker.fr.min.js"
+  integrity="sha256-IRibTuqtDv2uUUN/0iTrhnrvvygNczxRRAbPgCbs+LE=" crossorigin="anonymous"></script>
   <script type="text/javascript">
     $(document).ready(function() {
+      // Chargement de la map
       var mymap = L.map('mapid').setView([48.858560644769824, 2.294481307987543], 4);
-
       L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
@@ -30,19 +64,91 @@
         tileSize: 512,
         zoomOffset: -1,
         accessToken: '{{key}}'
-      }).addTo(mymap);
+      }).addTo(mymap)
 
-      // var marker = L.marker([51.5, -0.09]).addTo(mymap);
-      // marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+      // Champ date
+      $("#dateInput").datepicker({
+          format: 'dd/mm/yyyy',
+          language: 'fr'
+      })
 
-      function onMapClick(e) {
-        // L.marker([e.latlng.lat, e.latlng.lng]).addTo(mymap);
-        console.log(e.latlng.lat)
-        console.log(e.latlng.lng)
-        // alert("You clicked the map at " + e.latlng);
+      // Changement des champs
+      function checkChamps() {
+        if ($("#latInput").val() != "" && $("#lngInput").val() != "" && $("#dateInput").val() != "") {
+          $("#btnAdd").prop("disabled", false)
+          return true
+        } else {
+          $("#btnAdd").prop("disabled", true)
+          return false
+        }
       }
-      mymap.on('click', onMapClick);
+      $("#latInput").change(function() {
+        checkChamps()
+      })
+      $("#lngInput").change(function() {
+        checkChamps()
+      })
+      $("#dateInput").change(function() {
+        checkChamps()
+      })
 
-    });
+      // Ajax add marker
+      $("#btnAdd").click(function() {
+        addMarkerAjax();
+      });
+
+      function addMarkerAjax() {
+        var url = "{{ url_for('add-marker', {token: token}) }}"
+        if (checkChamps()) {
+          var data = {
+            lat: $("#latInput").val(),
+            lng: $("#lngInput").val(),
+            date: $("#dateInput").val(),
+            user: "{{user}}"
+          }
+          console.log(data)
+          $.ajax({
+              method: "POST",
+              url: url,
+              data: data,
+              success: function(data) {
+                console.log(data)
+                if (data.code == 201) {
+                  L.marker([
+                    $("#latInput").val(),
+                    $("#lngInput").val()
+                  ]).bindPopup("date: "+$("#dateInput").val()).addTo(mymap)
+                  $('#markerModal').modal('hide')
+                } else {
+                  alert(data.error)
+                }
+              },
+              error: function(e) {
+                console.log(e)
+                alert("Une erreur est survenue, veuillez réessayer plus tard")
+              }
+          })
+        }
+      }
+
+      // Event click map
+      function onMapClick(e) {
+        $('#latInput').val(e.latlng.lat)
+        $('#lngInput').val(e.latlng.lng)
+        $('#markerModal').modal({
+          backdrop: 'static'
+        })
+      }
+      mymap.on('click', onMapClick)
+
+      // Affichage des markers de l'utilisateur
+      {% for m in markers %}
+        L.marker([
+          {{m.lat}},
+          {{m.lng}}
+        ]).bindPopup("date: {{m.date|date('d/m/Y')}}").addTo(mymap)
+      {% endfor %}
+
+    })
   </script>
 {% endblock %}
